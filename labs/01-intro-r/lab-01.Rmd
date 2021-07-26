@@ -11,16 +11,53 @@ Today's agenda: A review of \texttt{R}, getting used to R markdown, vectors, mat
 
 1. Store three vectors using \textsf{rnorm()} of length $n = 100$ as \textsf{Var1}, \textsf{Var2}, and \textsf{Var3}.
 
+```{r}
+set.seed(1)
+Var1 <- rnorm(100)
+set.seed(2)
+Var2 <- rnorm(100)
+set.seed(3)
+Var3 <- rnorm(100)
+```
+
+
 
 2. List all the items currently in the environment.
+```{r}
+ls()
+```
 
 
 3. Store \textsf{Var1} in a $10 \times 10$ matrix. Call this \textsf{myMatrix}.
+```{r}
+myMatrix <- matrix(Var1, 10, 10)
+```
 
 
 4. Create a scatterplot of \textsf{Var1} vs. \textsf{Var2}. On the same plotting window include histograms of \textsf{Var1} and \textsf{Var2}.
+```{r}
+par(mfrow=c(1,3))
+plot(Var1, Var2)
+hist(Var1)
+hist(Var2)
+```
 
 
 5. Write a function that takes as its inputs, $p = 2$, $n$-dimensional vectors and a vector of length $p$ containing the names of these vectors. Your function combine these two vectors into a \textsf{data.frame()}, get the row-wise maximum and store this in a new vector. Finally produce a box-plot of this vector, store it as a separate .pdf, and return the mean value of this vector.
+
+```{r}
+func <- function(v1, v2, myNames) {
+  myData = data.frame(v1, v2)
+  names(myData) = myNames
+  myVector = apply(myData, 1, max)
+  pdf('myPlot.pdf')
+  boxplot(myVector)
+  dev.off()
+  final <- mean(myVector)
+  return(final)
+}
+
+func(Var1, Var2, c('myVar1', 'myVar2'))
+```
 
 
