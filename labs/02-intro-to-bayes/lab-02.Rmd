@@ -57,12 +57,20 @@ You have a rough sketch of what you should do for this part of the assignment. T
 ### Bernoulli LH Function ###
 # Input: obs.data, theta
 # Output: bernoulli likelihood
-
+myBernLH <- function(obs.data, theta) {
+  N <- length(obs.data)
+  x <- sum(obs.data)
+  LH <- (theta^x)*((1-theta)^(N-x))
+  return(LH)
+}
 
 ### Plot LH for a grid of theta values ###
 # Create the grid #
+theta.sim <- seq(from = 0, to = 1, length.out = 1000)
 # Store the LH values
+sim.LH <- myBernLH(obs.data, theta.sim)
 # Create the Plot
+plot(theta.sim, sim.LH, type = "l", main = "Likelihood Profile", xlab = "Simulated Support", ylab = "Likelihood")
 ```
 
 
@@ -71,8 +79,27 @@ You have a rough sketch of what you should do for this part of the assignment. T
 
 Write a function that takes as its inputs  prior parameters \textsf{a} and \textsf{b} for the Beta-Bernoulli model and the observed data, and produces the posterior parameters you need for the model. \textbf{Generate and print} the posterior parameters for a non-informative prior i.e. \textsf{(a,b) = (1,1)} and for an informative case \textsf{(a,b) = (3,1)}}.
 
+```{r}
+postParam <- function(a, b, obs.data) {
+  n <- length(obs.data)
+  x <- sum(obs.data)
+  post_a <- x + a
+  post_b <- n - x + b
+  return(c(post_a, post_b))
+}
+```
 
+```{r}
+postParam(1, 1, obs.data)
+```
+```{r}
+postParam(3, 1, obs.data)
+```
 
 # Task 5 (To be completed for homework)
 
 Create two plots, one for the informative and one for the non-informative case to show the posterior distribution and superimpose the prior distributions on each along with the likelihood. What do you see? Remember to turn the y-axis ticks off since superimposing may make the scale non-sense.
+
+```{r}
+
+```
