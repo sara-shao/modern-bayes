@@ -1,7 +1,7 @@
 ---
 title: "Lab 2 -- Beta-Binomial Distribution"
-author: "Rebecca C. Steorts"
-date: "January 2018"
+author: "Sara Shao"
+date: "`r Sys.Date()`"
 output: pdf_document
 ---
 
@@ -70,7 +70,8 @@ theta.sim <- seq(from = 0, to = 1, length.out = 1000)
 # Store the LH values
 sim.LH <- myBernLH(obs.data, theta.sim)
 # Create the Plot
-plot(theta.sim, sim.LH, type = "l", main = "Likelihood Profile", xlab = "Simulated Support", ylab = "Likelihood")
+plot(theta.sim, sim.LH, type = "l", main = "Likelihood Profile", 
+     xlab = "Simulated Support", ylab = "Likelihood")
 ```
 
 
@@ -89,9 +90,11 @@ postParam <- function(a, b, obs.data) {
 }
 ```
 
+Non-informative
 ```{r}
 postParam(1, 1, obs.data)
 ```
+Informative
 ```{r}
 postParam(3, 1, obs.data)
 ```
@@ -100,6 +103,47 @@ postParam(3, 1, obs.data)
 
 Create two plots, one for the informative and one for the non-informative case to show the posterior distribution and superimpose the prior distributions on each along with the likelihood. What do you see? Remember to turn the y-axis ticks off since superimposing may make the scale non-sense.
 
-```{r}
 
+Non-informative
+```{r}
+theta.sim <- seq(from = 0, to = 1, length.out = 1000)
+
+non_a <- postParam(1, 1, obs.data)[1]
+non_b <- postParam(1, 1, obs.data)[2]
+
+sim.LH <- myBernLH(obs.data, theta.sim)
+
+#posterior is red
+plot(theta.sim, dbeta(theta.sim, non_a, non_b), type = "l", col = "red", 
+     yaxt = "n", xlab = "", ylab = "")
+par(new = TRUE)
+#prior is blue
+plot(theta.sim, dbeta(theta.sim, 1, 1), type = "l", col = "blue", 
+     yaxt = "n", xlab = "", ylab = "")
+par(new = TRUE)
+#likelihood is black
+plot(theta.sim, sim.LH, type = "l", 
+     yaxt = "n", xlab = "Simulated Support", ylab = "")
 ```
+
+
+Informative
+```{r}
+inf_a <- postParam(3, 1, obs.data)[1]
+inf_b <- postParam(3, 1, obs.data)[2]
+
+#posterior is red
+plot(theta.sim, dbeta(theta.sim, inf_a, inf_b), type = "l", col = "red", 
+     yaxt = "n", xlab = "", ylab = "")
+par(new = TRUE)
+#prior is blue
+plot(theta.sim, dbeta(theta.sim, 3, 1), type = "l", col = "blue", 
+     yaxt = "n", xlab = "", ylab = "")
+par(new = TRUE)
+#likelihood is black
+plot(theta.sim, sim.LH, type = "l", 
+     yaxt = "n", xlab = "Simulated Support", ylab = "")
+```
+
+
+In the graph for the non-informative case, the posterior distribution is pretty much exactly proportional to the likelihood distribution. In the informative case, however, we can see that although the posterior distribution is still similar to the likelihood, the mean is shifted a little bit in the the direction of the prior mean.

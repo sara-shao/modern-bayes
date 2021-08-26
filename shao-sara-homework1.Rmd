@@ -41,7 +41,7 @@ f.
 names(rain.df) <- c("year","month","day",seq(0,23))
 head(rain.df)
 ```
-The above command changes the names of the columns to the array that's assigned to `names(rain.df)`.
+The above command changes the names of the first three columns to the year, day, and month of the observations, and the next 24 columns represent the hour of the day that the observation was taken.
 
 g. 
 ```{r}
@@ -84,7 +84,7 @@ b.
 y <- c("5",7,12)
 y[2] + y[3]
 
-These two commands would produce an error. This is because arrays can only store one type of value, and since the first value is a string, the other values are automatically converted into strings as well. Therefore, when the second command tries to add the second and third values in the array, it results in an error since only numeric values can be added. 
+These two commands would produce an error. This is because arrays can only store one type of value, and since one value is a string, the other values are automatically converted into strings as well. Therefore, when the second command tries to add the second and third values in the array, it results in an error since only numeric values can be added. 
 
 
 c. 
