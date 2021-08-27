@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1a.
 ```{r}
-data <- read.table("homeworks/homework-1/data/rnf6080.dat")
+data <- read.table("https://raw.githubusercontent.com/resteorts/modern-bayes/master/homeworks/homework-1/data/rnf6080.dat")
 rain.df <- data.frame(data)
 ```
 To load the data into R, I used read.table. To make the data into a data frame, I used data.frame.
@@ -32,15 +32,18 @@ d.
 ```{r}
 rain.df[2,4]
 ```
+
 e.
 ```{r}
 rain.df[2,]
 ```
+
 f.
 ```{r}
 names(rain.df) <- c("year","month","day",seq(0,23))
 head(rain.df)
 ```
+
 The above command changes the names of the first three columns to the year, day, and month of the observations, and the next 24 columns represent the hour of the day that the observation was taken.
 
 g. 
@@ -49,8 +52,11 @@ rain.df$daily <- rowSums(rain.df[, c(4:27)])
 ```
 h.
 ```{r}
-hist(rain.df$daily)
+hist(rain.df$daily, main = "Daily Rainfall Distribution", 
+     xlab = "Daily Rainfall")
 ```
+
+
 i.
 The above histogram cannot be right because it shows that some of the daily rainfall amounts were negative, which is not possible. 
 
@@ -63,8 +69,11 @@ The above command remove rows that have negative values.The reason the dataset h
 
 k.
 ```{r}
-hist(rain.subset$daily)
+hist(rain.subset$daily, main = "Daily Rainfall Distribution", 
+     xlab = "Daily Rainfall")
 ```
+
+
 This histogram is more reasonable because it no longer includes negative values for daily amounts of rainfall.
 
 2a.
