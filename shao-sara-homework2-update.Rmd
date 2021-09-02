@@ -1,13 +1,13 @@
 ---
 title: "Homework 2"
 author: "Sara Shao"
-date: "`r Sys.Date()"
+date: "`r Sys.Date()`"
 output:
   pdf_document: default
   html_document: default
 ---
 
-##1a.
+## 1a.
 
 The data can be simulated as follows:
 ```{r,echo=TRUE}
@@ -51,7 +51,7 @@ plot(theta.sim, sim.LH, type = "l", main = "Likelihood Profile",
 ```
 
 
-##1b.
+## 1b.
 
 Write a function that takes as its inputs  prior parameters \textsf{a} and \textsf{b} for the Beta-Bernoulli model and the observed data, and produces the posterior parameters you need for the model. \textbf{Generate and print} the posterior parameters for a non-informative prior i.e. \textsf{(a,b) = (1,1)} and for an informative case \textsf{(a,b) = (3,1)}}.
 
@@ -74,7 +74,7 @@ Informative
 postParam(3, 1, obs.data)
 ```
 
-##1c.
+## 1c.
 
 Create two plots, one for the informative and one for the non-informative case to show the posterior distribution and superimpose the prior distributions on each along with the likelihood. What do you see? Remember to turn the y-axis ticks off since superimposing may make the scale non-sense.
 
@@ -124,21 +124,49 @@ plot(theta.sim, sim.LH, type = "l",
 In the graph for the non-informative case, the posterior distribution is pretty much exactly proportional to the likelihood distribution. In the informative case, however, we can see that although the posterior distribution is still similar to the likelihood, the mean is shifted a little bit in the the direction of the prior mean.
 
 
-##2c.
+## 2c.
+
 ```{r}
-l.data <-c(20.9, 69.7, 3.6, 21.8, 21.4, 0.4, 6.7, 10.0)
-x <- sum(l.data)
-n <- length(l.data)
+data <- c(20.9, 69.7, 3.6, 21.8, 21.4, 0.4, 6.7, 10.0)
+# sequence of theta values
+theta <- seq(0, 1, length.out=100)
+x <- sum(data)
+n <- length(data) 
+# calculate prior and posterior distributions
 a <- 0.1
 b <- 1.0
-x
+prior <- dgamma(theta, shape = a, rate = b)
+posterior <- dgamma(theta, shape = a + n, rate = b + x)
+
+plot(prior, xlab=expression(theta), ylab="Density", type = "l", col="blue",lty=1, ylim=c(0,30))
+lines(posterior, col="red",lty=2)
+legend('topright', c("Prior", "Posterior"), lty=c(1,2), col=c("blue","red"))
+```
+
+## 3a.
+```{r}
+dgalenshore <- function(theta, c, d) {
+  result <- (2/gamma(c))*(d^(2*c))*(theta^(2*c-1))*exp(-d^2*theta^2)
+  return(result)
+}
+
+density1 <- apply(as.matrix(theta.sim), 2, dgalenshore, 3, 4)
+density2 <- apply(as.matrix(theta.sim), 2, dgalenshore, 3, 10)
+density3 <- apply(as.matrix(theta.sim), 2, dgalenshore, 2, 30)
+density4 <- apply(as.matrix(theta.sim), 2, dgalenshore, 15, 5)
 ```
 
 ```{r}
-theta.sim <- seq(from = 0, to = 80, length.out = 10000)
-#prior is blue
-plot(theta.sim, dgamma(theta.sim, 0.1, 1.0), type = "l", col = "blue", xlab = "", ylab = "")
-#posterior is red
-plot(theta.sim, dgamma(theta.sim, a+n, b+x), type = "l", col = "red", xlab = "Simulated Support", ylab = "")
+plot(theta.sim, density1, type = "l", col = "red", 
+     ylim = c(0,30), ylab = "Density", xlab = expression(theta))
+par(new = TRUE)
+plot(theta.sim, density2, type = "l", col = "green", 
+     ylim = c(0,30), ylab = "", xlab = "")
+par(new = TRUE)
+plot(theta.sim, density3, type = "l", col = "blue", 
+     ylim = c(0,30), ylab = "", xlab = "")
+par(new = TRUE)
+plot(theta.sim, density4, type = "l", col = "purple", 
+     ylim = c(0,30), ylab = "", xlab = "")
 ```
 
