@@ -120,7 +120,6 @@ plot(theta.sim, sim.LH, type = "l",
      yaxt = "n", xlab = "Simulated Support", ylab = "")
 ```
 
-
 In the graph for the non-informative case, the posterior distribution is pretty much exactly proportional to the likelihood distribution. In the informative case, however, we can see that although the posterior distribution is still similar to the likelihood, the mean is shifted a little bit in the the direction of the prior mean.
 
 
@@ -149,6 +148,8 @@ dgalenshore <- function(theta, c, d) {
   result <- (2/gamma(c))*(d^(2*c))*(theta^(2*c-1))*exp(-d^2*theta^2)
   return(result)
 }
+
+theta.sim <- seq(from = 0, to = 1, length.out = 1000)
 
 density1 <- apply(as.matrix(theta.sim), 2, dgalenshore, 3, 4)
 density2 <- apply(as.matrix(theta.sim), 2, dgalenshore, 3, 10)
