@@ -1,7 +1,7 @@
 
 ---
 title: "Lab 3: Intro to Decision Theory"
-author: "Rebecca C. Steorts and Xingyu Yan"
+author: "Sara Shao"
 output: 
      pdf_document:
       includes: 
