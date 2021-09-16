@@ -408,3 +408,10 @@ ggplot(data = prior_sim, aes(x = mu, y = lambda)) +
 
 This graph shows that when the standard deviation of change is close to 0, the observed mean changes tend to be close to 0 as well. When the standard deviation of change is large, the observed mean changes tend to vary more. In this graph, we can also see that the observed standard deviations never reach below a 3. These findings from the graph are consistent with our prior beliefs that we don't know if students will improve or not on average (mean change centered around 0), and we wouldn't expect the standard deviation of change to be very small (very unlikely that the standard deviation is less than 3). 
 
+
+```{r}
+x=c(0.45,0.68,0.87,0.36,0.54)
+-5/sum(log(x))
+```
+
+
