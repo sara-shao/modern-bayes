@@ -21,43 +21,48 @@ set.seed(123)
 1a.
 
 $$\psi = log(\frac{\theta}{1-\theta}) \rightarrow \theta = \frac{e^\psi}{1+e^\psi}$$
-$$\frac{dh}{d\psi} = \frac{e^\psi}{(1+e^\psi)^2}$$
+$$|\frac{dh}{d\psi}| = \frac{e^\psi}{(1+e^\psi)^2}$$
 
 $$p_\psi(\psi) = \frac{1}{B(\alpha,\beta)}(\frac{e^\psi}{1+e^\psi})^{\alpha-1}(1-(\frac{e^\psi}{1+e^\psi}))^{\beta-1} \times \frac{e^\psi}{(1+e^\psi)^2} = \frac{1}{B(\alpha,\beta)}(\frac{e^\psi}{1+e^\psi})^{\alpha}(\frac{1+e^\psi}{e^\psi})(1-(\frac{e^\psi}{1+e^\psi}))^{\beta-1} \times \frac{e^\psi}{(1+e^\psi)^2}$$
 $$=\frac{1}{B(\alpha,\beta)}(\frac{e^\psi}{1+e^\psi})^{a}(1-(\frac{e^\psi}{1+e^\psi}))^{\beta}(\frac{1+e^\psi}{1+e^\psi}-\frac{e^\psi}{1+e^\psi})^{-1} \times \frac{1}{1+e^\psi} = \frac{1}{B(\alpha,\beta)}(\frac{e^\psi}{1+e^\psi})^{a}(1-(\frac{e^\psi}{1+e^\psi}))^{\beta}$$
 
-$$p_\psi(\theta) \propto Beta(\alpha+1, \beta+1)$$
+When a=b=1:
+
+$$(\frac{e^\psi}{1+e^\psi})^{a}(1-(\frac{e^\psi}{1+e^\psi}))^{\beta} = (\frac{e^\psi}{1+e^\psi})(1-(\frac{e^\psi}{1+e^\psi})) = (\frac{e^\psi}{1+e^\psi})(\frac{1}{1+e^\psi}) = \frac{e^\psi}{(1+e^\psi)^2} $$
 
 ```{r}
-psi.sim <- seq(1, 100)
+psi.sim <- seq(-10, 10, length = 1000)
 
-betaPsi = function(psi, alpha, beta) {
-  output <- dbeta(exp(psi)/(1+exp(psi)), alpha + 1, beta + 1)
+betaPsi = function(psi) {
+  output <- exp(psi) / (1+exp(psi))^2
   return(output)
 }
 ```
 
 ```{r}
-p <- apply(as.matrix(psi.sim),1,betaPsi,1,1)
+p <- apply(as.matrix(psi.sim),1,betaPsi)
 plot(psi.sim, p, type = "l", xlab = expression(psi))
 ```
 
 1b. 
-$$\psi = log(\theta) \rightarrow \theta = e^\psi$$
-$$p_\psi(\psi) = \frac{\beta^\alpha}{\Gamma(\alpha)}(e^\psi)^{\alpha-1}e^{-\beta e^\psi} \times e^\psi= \frac{\beta^\alpha}{\Gamma(\alpha)}(e^\psi)^{\alpha}e^{-\beta e^\psi}$$
+$$\psi = log(\theta) \rightarrow \theta = e^\psi$$ 
+$$|\frac{dh}{d\psi}| = e^\psi$$
+$$p_\psi(\psi) = \frac{\beta^\alpha}{\Gamma(\alpha)}(e^\psi)^{\alpha-1}e^{-\beta e^\psi} \times e^\psi= \frac{\beta^\alpha}{\Gamma(\alpha)}(e^\psi)^{\alpha}e^{-\beta e^\psi} = \frac{\beta^\alpha}{\Gamma(\alpha)}e^{\psi \alpha-\beta e^\psi}$$
 
-$$p_\psi(\theta) \propto Gamma(\alpha+1, \beta)$$
+When a=b=1:
+
+$$e^{\psi \alpha-\beta e^\psi} = e^{\psi-e^\psi}$$
 
 ```{r}
-psi.sim <- seq(1, 100)
+psi.sim <- seq(-10, 10, length = 1000)
 
-gammaPsi = function(psi, alpha, beta) {
-  output <- dgamma(exp(psi), 1+alpha, beta)
+gammaPsi = function(psi) {
+  output <- exp(psi - exp(psi))
   return(output)
 }
 ```
 ```{r}
-p <- apply(as.matrix(psi.sim),1,gammaPsi,1,1)
+p <- apply(as.matrix(psi.sim),1,gammaPsi)
 plot(psi.sim, p, type = "l", xlab = expression(psi))
 ```
 
