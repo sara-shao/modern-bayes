@@ -80,11 +80,13 @@ You will find code below (that is also taken from class ) that will help you wit
 
 
 
-
+### 1. 
 
 ```{r}
 knitr::opts_chunk$set(cache=FALSE)
 library(xtable)
+
+set.seed(315)
 
 # Samples from a truncated gamma with
 # truncation (t, infty), shape a, and rate b
@@ -134,14 +136,14 @@ z <- c(3.4,2.9,1.4,3.2,1.8,4.6,2.8)
 c <- c(1.2,1.7,2.0,1.4,0.6)
 
 
-n.iter <- 200
+n.iter <- 40
 init.theta <- 1
 init.missing <- rgamma(length(c), shape = r, rate = init.theta)
 # run sampler
 res <- sampleGibbs(z, c, n.iter, init.theta, init.missing, r, a, b)
 ```
 
-In figure \ref{fig:trace-theta} and \ref{fig:trace-z} we see traceplots for 200 iterations of the Gibbs sampler. It is difficult to tell whether or not the sampler has failed to converge, thus, we turn to running average plots. 
+In figure \ref{fig:trace-theta} and \ref{fig:trace-z} we see traceplots for 40 iterations of the Gibbs sampler. It is clear that the sampler has failed to converge because the both theta and the censored values still move around quite a bit throughout the 40 iterations.
 
 ```{r fig:trace-theta, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:trace-theta}Traceplot of theta"}
 plot(1:n.iter, res[,1], pch = 16, cex = .35,
@@ -149,7 +151,7 @@ plot(1:n.iter, res[,1], pch = 16, cex = .35,
      main = expression(paste("Traceplot of ", theta)))
 ```
 
-In figures \ref{fig:run-theta} and \ref{fig:run-z} we see running average plots for 200 iterations of the Gibbs sampler, where from all of these it is clear that after 200 iterations the sampler is having mixing issues, and should be run for long to check that "it has not failed to converge."
+In figures \ref{fig:run-theta} and \ref{fig:run-z} we see running average plots for 40 iterations of the Gibbs sampler, where from all of these it is clear that after 40 iterations the sampler is having mixing issues since the running average graph does not flatten out, and should be run for longer in order to check that "it has not failed to converge."
 
 ```{r fig:trace-z, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:trace-z}Traceplot of $z_3, z_8, z_9, z_{10}, z_{12}.$"}
 missing.index <- c(3,8,9,10,12)
@@ -186,7 +188,7 @@ for (ind in missing.index){
 plot.new()
 ```
 
-Figures \ref{fig:density-theta} and \ref{fig:density-z} do not provide meaniful inference at this point since the sampler has not been run long enough. 
+Figures \ref{fig:density-theta} and \ref{fig:density-z} do not provide meaningful inference at this point since the sampler has not been run long enough. 
 
 ```{r fig:density-theta, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:density-theta}Estimated posterior density of theta"}
 # density plots
@@ -202,8 +204,151 @@ abline(v = mean(res[,4]), col = "red")
 ```
 
 
+```{r}
+# set parameter values
+r <- 10
+a <- 1
+b <- 1
+# input data
+z <- c(3.4,2.9,1.4,3.2,1.8,4.6,2.8)
+c <- c(1.2,1.7,2.0,1.4,0.6)
+
+
+n.iter <- 10000
+init.theta <- 1
+init.missing <- rgamma(length(c), shape = r, rate = init.theta)
+# run sampler
+res <- sampleGibbs(z, c, n.iter, init.theta, init.missing, r, a, b)
+```
+
+### 2.
+In figure \ref{fig:trace-theta2} and \ref{fig:trace-z2} we see traceplots for 10,000 iterations of the Gibbs sampler. It this case it seems that the sampler has not failed to converge since the values for theta and the censored values seem to be centered at certain values and are flat across the iterations.
+
+```{r fig:trace-theta2, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:trace-theta2}Traceplot of theta"}
+plot(1:n.iter, res[,1], pch = 16, cex = .35,
+     xlab = "Iteration", ylab = expression(theta),
+     main = expression(paste("Traceplot of ", theta)))
+```
+
+In figures \ref{fig:run-theta2} and \ref{fig:run-z2} we see running average plots for 10,000 iterations of the Gibbs sampler, where from all of these we can conclude that that the sampler has not failed to converge, given that the running average plots flatten out into a straight line across after a couple thousand iterations. Therefore, we do not need to run the sampler for longer.
+
+
+```{r fig:trace-z2, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:trace-z2}Traceplot of $z_3, z_8, z_9, z_{10}, z_{12}.$"}
+missing.index <- c(3,8,9,10,12)
+par(mfrow=c(2,3))
+for (ind in missing.index){
+  x.lab <- bquote(z[.(ind)])
+  plot(1:n.iter, res[,which(missing.index == ind)], pch = 16, cex = .35,
+       xlab = "Iteration", ylab = x.lab,
+       main = bquote(paste("Traceplot of ", .(x.lab)))) 
+}
+plot.new()
+```
+
+```{r}
+# get running averages
+run.avg <- apply(res, 2, cumsum)/(1:n.iter)
+```
+
+```{r fig:run-theta2, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:run-theta2}Running average plot of theta"}
+plot(1:n.iter, run.avg[,1], type = "l",
+     xlab = "Iteration", ylab = expression(theta),
+     main = expression(paste("Running Average Plot of ", theta)))
+```
+
+```{r fig:run-z2, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:run-z2}Running average plots of $z_3, z_8, z_9, z_{10}, z_{12}.$"}
+par(mfrow=c(2,3))
+missing.index <- c(3,8,9,10,12)
+for (ind in missing.index){
+  x.lab <- bquote(z[.(ind)])
+  plot(1:n.iter, run.avg[,which(missing.index == ind)], type = "l",
+       xlab = "Iteration", ylab = x.lab,
+       main = bquote(paste("Running Average Plot of ", .(x.lab)))) 
+}
+plot.new()
+```
+
+
+```{r fig:density-theta2, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:density-theta2}Estimated posterior density of theta"}
+# density plots
+plot(density(res[,1]), xlab = expression(theta), 
+     main = expression(paste("Density of ", theta)))
+abline(v = mean(res[,1]), col = "red")
+```
+
+```{r fig:density-z2, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:density-z2}Estimated posterior density of $z_9$ (posterior mean in red)."}
+plot(density(res[,4]), xlab = expression(z[9]),
+     main = expression(paste("Density of ", z[9])))
+abline(v = mean(res[,4]), col = "red")
+```
+
+### 3.
+Figures \ref{fig:density-theta2} and \ref{fig:density-z2} suggest that theta is centered around 3.3 and that the posterior mean of the censored values is also around 3.3.
 
 
 
+### 4.
+
+When a = 1 and b = 100, we can see that the posterior density for theta is centered at around 0.59 and the posterior density for censored values is centered at around 15, judging from Figures \ref{fig:density-theta3} and \ref{fig:density-z3}.
+
+When a = 100 and b = 1, we can see that the posterior density for theta is centered at around 7.25 and the posterior density for censored values is centered at around 2.3, judging from Figures \ref{fig:density-theta4} and \ref{fig:density-z4}.
+
+```{r}
+# set parameter values
+r <- 10
+a <- 1
+b <- 100
+# input data
+z <- c(3.4,2.9,1.4,3.2,1.8,4.6,2.8)
+c <- c(1.2,1.7,2.0,1.4,0.6)
 
 
+n.iter <- 10000
+init.theta <- 1
+init.missing <- rgamma(length(c), shape = r, rate = init.theta)
+# run sampler
+res <- sampleGibbs(z, c, n.iter, init.theta, init.missing, r, a, b)
+```
+
+```{r fig:density-theta3, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:density-theta3}Estimated posterior density of theta"}
+# density plots
+plot(density(res[,1]), xlab = expression(theta), 
+     main = expression(paste("Density of ", theta)))
+abline(v = mean(res[,1]), col = "red")
+```
+
+```{r fig:density-z3, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:density-z3}Estimated posterior density of $z_9$ (posterior mean in red)."}
+plot(density(res[,4]), xlab = expression(z[9]),
+     main = expression(paste("Density of ", z[9])))
+abline(v = mean(res[,4]), col = "red")
+```
+
+```{r}
+# set parameter values
+r <- 10
+a <- 100
+b <- 1
+# input data
+z <- c(3.4,2.9,1.4,3.2,1.8,4.6,2.8)
+c <- c(1.2,1.7,2.0,1.4,0.6)
+
+
+n.iter <- 10000
+init.theta <- 1
+init.missing <- rgamma(length(c), shape = r, rate = init.theta)
+# run sampler
+res <- sampleGibbs(z, c, n.iter, init.theta, init.missing, r, a, b)
+```
+
+```{r fig:density-theta4, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:density-theta4}Estimated posterior density of theta"}
+# density plots
+plot(density(res[,1]), xlab = expression(theta), 
+     main = expression(paste("Density of ", theta)))
+abline(v = mean(res[,1]), col = "red")
+```
+
+```{r fig:density-z4, echo=FALSE, fig.width=7,fig.height=6,fig.cap="\\label{fig:density-z4}Estimated posterior density of $z_9$ (posterior mean in red)."}
+plot(density(res[,4]), xlab = expression(z[9]),
+     main = expression(paste("Density of ", z[9])))
+abline(v = mean(res[,4]), col = "red")
+```
